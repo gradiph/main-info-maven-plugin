@@ -22,11 +22,15 @@ public class MainInfoMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     MavenProject project;
+    
+    @Parameter(property = "mainClass")
+    String mainClass;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         String mainInfo = getMainInfo();
         getLog().info(mainInfo);
+        writeToMainClass(mainInfo);
     }
 
     protected String getMainInfo() {
@@ -36,5 +40,16 @@ public class MainInfoMojo extends AbstractMojo {
         return "Package: " + packageName + "\n"
                 + "Version: " + version + "\n"
                 + "Build Date: " + buildDate;
+    }
+    
+    protected void writeToMainClass(String mainInfo) {
+        setMainClass();
+    }
+    
+    protected void setMainClass() {
+        if (project.getProperties().getProperty(Constants.PROP_EXEC_MAIN_CLASS) != null) {
+            mainClass = project.getProperties().getProperty(Constants.PROP_EXEC_MAIN_CLASS);
+        }
+        getLog().info("Main Class: " + mainClass);
     }
 }
